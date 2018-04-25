@@ -72,7 +72,7 @@ var _user$project$Native_Stripe = function() {
   }
 
   function callbackOnStatusChanged(source) {
-    const currentStatus = source.status.ctor
+    const currentStatus = source.status
 
     return _elm_lang$core$Native_Scheduler.nativeBinding(
       function(callback) {
@@ -87,8 +87,8 @@ var _user$project$Native_Stripe = function() {
           })
             .then(function(result) {
               const newSource = result.source
-              const newSourceStatus = toStatus3DSecure(result.source.status).ctor
-              if (newSourceStatus !== currentStatus) {
+              const newSourceStatus = toStatus3DSecure(result.source.status)
+              if (newSourceStatus.ctor !== currentStatus.ctor) {
                 clearInterval(intervalID)
                 callback(_elm_lang$core$Native_Scheduler.succeed({
                   id: newSource.id,
