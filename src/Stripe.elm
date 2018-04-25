@@ -25,11 +25,18 @@ type alias SourceCard =
 type alias Source3DSecure =
     { id : String
     , clientSecret : String
-    , status : String
+    , status : Status3DSecure
     , redirect :
         { url : String
         }
     }
+
+
+type Status3DSecure
+    = Chargeable3D
+    | Failed3D
+    | Pending3D
+    | WrongReturnedValue3D
 
 
 type alias CreateSource3DSecureParams =

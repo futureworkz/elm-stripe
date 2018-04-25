@@ -60,7 +60,7 @@ var _user$project$Native_Stripe = function() {
               return callback(_elm_lang$core$Native_Scheduler.succeed({
                 id: source.id,
                 clientSecret: source.client_secret,
-                status: source.status,
+                status: toStatus3DSecure(source.status),
                 redirect: {
                   url: source.redirect.url
                 }
@@ -72,7 +72,7 @@ var _user$project$Native_Stripe = function() {
   }
 
   function callbackOnStatusChanged(source) {
-    const currentStatus = source.status
+    const currentStatus = source.status.ctor
 
     return _elm_lang$core$Native_Scheduler.nativeBinding(
       function(callback) {
@@ -87,12 +87,13 @@ var _user$project$Native_Stripe = function() {
           })
             .then(function(result) {
               const newSource = result.source
-              if (newSource.status !== currentStatus) {
+              const newSourceStatus = toStatus3DSecure(result.source.status).ctor
+              if (newSourceStatus !== currentStatus) {
                 clearInterval(intervalID)
                 callback(_elm_lang$core$Native_Scheduler.succeed({
                   id: newSource.id,
                   clientSecret: newSource.client_secret,
-                  status: newSource.status,
+                  status: newSourceStatus,
                   redirect: {
                     url: newSource.redirect
                   }
@@ -101,6 +102,19 @@ var _user$project$Native_Stripe = function() {
             })
         }, 1000)
       })
+  }
+
+  function toStatus3DSecure(status) {
+    switch(status) {
+      case "chargeable" :
+        return { ctor: "Chargeable3D" }
+      case "failed" :
+        return { ctor: "Failed3D" }
+      case "pending" :
+        return { ctor: "Pending3D" }
+      default:
+        return { ctor: "WrongReturnedValue3D" }
+    }
   }
 
   return {
