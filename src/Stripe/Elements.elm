@@ -2,7 +2,6 @@ module Stripe.Elements exposing (..)
 
 import Native.Elements
 import Task exposing (Task)
-import Stripe exposing (Currency, Error)
 
 
 type alias Config =
@@ -11,6 +10,7 @@ type alias Config =
     , errorElementID : String
     , cardOptions :
         { hidePostalCode : Bool
+        , hideIcon : Bool
         }
     }
 

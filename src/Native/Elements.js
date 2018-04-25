@@ -21,7 +21,6 @@ var _user$project$Native_Elements = function() {
                   color: '#e64a19'
                 }
               }
-              config.cardOptions['hideIcon'] = true
               window.card = elements.create('card', config.cardOptions)
               window.card.mount('#' + config.cardElementID)
 
