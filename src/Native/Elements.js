@@ -4,42 +4,51 @@ var _user$project$Native_Elements = function() {
   function mount(config) {
     return _elm_lang$core$Native_Scheduler.nativeBinding(
       function(callback) {
-        loadStripeScript(function() {
-          window.stripe = Stripe(config.key);
-          const elements = window.stripe.elements()
-
-          // We don't know when Elm has rendered the view
-          // so we poll for it until the view is rendered
-          const listen = setInterval(function() {
-            const ele = document.getElementById(config.cardElementID)
-            if (ele) {
-              config.cardOptions['style'] = {
-                base: {
-                  fontSize: '18px'
-                },
-                invalid: {
-                  color: '#e64a19'
-                }
-              }
-              window.card = elements.create('card', config.cardOptions)
-              window.card.mount('#' + config.cardElementID)
-
-              window.card.addEventListener('change', function(event) {
-                var displayError = document.getElementById(config.errorElementID)
-                if (event.error) {
-                  displayError.textContent = event.error.message
-                } else {
-                  displayError.textContent = ''
-                }
-              })
-
-              clearInterval(listen)
-            }
+        if (window.stripe) {
+          startMount(config)
+        } else {
+          loadStripeScript(function() {
+            window.stripe = Stripe(config.key)
+            startMount(config)
           }, 200)
 
-          return callback(_elm_lang$core$Native_Scheduler.succeed())
-        })
+        }
+
+        return callback(_elm_lang$core$Native_Scheduler.succeed())
       })
+  }
+
+  function startMount(config) {
+    const elements = window.stripe.elements()
+
+    // We don't know when Elm has rendered the view
+    // so we poll for it until the view is rendered
+    const listen = setInterval(function() {
+      const ele = document.getElementById(config.cardElementID)
+      if (ele) {
+        config.cardOptions['style'] = {
+          base: {
+            fontSize: '18px'
+          },
+          invalid: {
+            color: '#e64a19'
+          }
+        }
+        window.card = elements.create('card', config.cardOptions)
+        window.card.mount('#' + config.cardElementID)
+
+        window.card.addEventListener('change', function(event) {
+          var displayError = document.getElementById(config.errorElementID)
+          if (event.error) {
+            displayError.textContent = event.error.message
+          } else {
+            displayError.textContent = ''
+          }
+        })
+
+        clearInterval(listen)
+      }
+    }, 200)
   }
 
   function loadStripeScript(onload) {
